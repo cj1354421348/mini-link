@@ -46,7 +46,12 @@ export default {
       return handleDelete(request, env);
     }
 
-    // 5. 核心功能: 短链跳转 (/:slug)
+    // 5. API: 清空所有 (危险操作)
+    if (path === '/api/clear' && method === 'DELETE') {
+      return handleClear(request, env);
+    }
+
+    // 6. 核心功能: 短链跳转 (/:slug)
     const slug = path.split('/')[1];
     if (slug && slug.length > 0) {
       return handleRedirect(slug, env);
@@ -179,6 +184,34 @@ async function handleDelete(request, env) {
 
   await env.LINKS.delete(slug);
   return jsonResponse({ success: true });
+}
+
+async function handleClear(request, env) {
+  if (!isAuthenticated(request, env)) return jsonResponse({ error: 'Unauthorized' }, 401);
+
+  // 这是一个耗时操作，我们分批删除
+  let cursor = null;
+  let deletedCount = 0;
+
+  do {
+    const list = await env.LINKS.list({ limit: 1000, cursor });
+    cursor = list.cursor;
+
+    // 过滤掉系统 Keys (USAGE:)
+    const keysToDelete = list.keys
+      .filter(k => !k.name.startsWith('USAGE:'))
+      .map(k => k.name);
+
+    if (keysToDelete.length > 0) {
+      // KV 虽然不支持批量删除 API，但在 Worker 里我们可以 Promise.all
+      // 为了不炸穿并发限制，分块处理
+      await Promise.all(keysToDelete.map(key => env.LINKS.delete(key)));
+      deletedCount += keysToDelete.length;
+    }
+
+  } while (cursor);
+
+  return jsonResponse({ success: true, deleted: deletedCount });
 }
 
 // --- Utils ---

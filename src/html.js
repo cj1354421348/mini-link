@@ -32,7 +32,6 @@ export function renderHtml() {
             overflow-x: hidden;
         }
 
-        /* 动态背景点缀 */
         body::before {
             content: '';
             position: absolute;
@@ -49,297 +48,428 @@ export function renderHtml() {
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 550px; /* 稍微加宽以适应管理界面 */
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 3rem 2rem;
+            padding: 2.5rem;
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             text-align: center;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         h1 {
             margin: 0 0 2rem 0;
             font-weight: 700;
             letter-spacing: -0.05em;
-            font-size: 2rem;
+            font-size: 1.8rem;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* 输入框容器 */
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
+        .input-wrapper { position: relative; margin-bottom: 1.5rem; }
+        
         input {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 18px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--glass-border);
             color: white;
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
             transition: all 0.3s;
         }
-        
         input:focus {
             border-color: var(--accent);
             background: rgba(0, 0, 0, 0.4);
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        input::placeholder { color: #475569; }
-
-        /* 按钮 */
         button {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: var(--accent);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 10px 20px -10px var(--accent);
         }
-
         button:hover {
             background: var(--accent-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 15px 25px -10px var(--accent);
+            transform: translateY(-1px);
+        }
+        button:disabled { opacity: 0.7; cursor: wait; }
+
+        /* 管理界面特有 */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
         }
         
-        button:active { transform: translateY(0); }
-        button:disabled { opacity: 0.7; cursor: not-allowed; }
-
-        /* 结果区域 */
-        #result {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border-radius: 16px;
-            display: none;
-            animation: slideUp 0.3s ease-out;
-            border: 1px solid var(--glass-border);
+        .admin-toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1rem;
         }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-label { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; }
-        .short-url { 
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            color: var(--accent); 
-            margin-bottom: 1rem; 
-            word-break: break-all; 
-            font-family: monospace;
-        }
-
-        .btn-copy {
-            background: rgba(255,255,255,0.1);
-            box-shadow: none;
-            padding: 10px;
-            font-size: 0.9rem;
-        }
-        .btn-copy:hover { background: rgba(255,255,255,0.2); }
-
-        /* 管理界面 */
-        .admin-link {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(255,255,255,0.2);
-            text-decoration: none;
-            font-size: 0.8rem;
-            transition: opacity 0.3s;
-        }
-        .admin-link:hover { opacity: 1; }
 
         .link-item {
-            background: rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 12px;
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 8px;
+            padding: 12px;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid transparent;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
         }
-        .link-item:hover { border-color: var(--glass-border); }
-        
-        .link-detail { text-align: left; overflow: hidden; }
-        .slug-txt { color: var(--accent); font-weight: bold; font-family: monospace; }
-        .url-txt { color: var(--text-secondary); font-size: 0.8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-        
-        .btn-del {
-            width: auto;
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--danger);
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            box-shadow: none;
+        .link-item:hover { 
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1); 
         }
-        .btn-del:hover { background: var(--danger); color: white; }
+        
+        .link-detail { text-align: left; overflow: hidden; flex: 1; margin-right: 10px; }
+        .slug-txt { color: var(--accent); font-weight: bold; font-family: monospace; font-size: 1.1em; display: inline-block; margin-right: 8px; }
+        .date-txt { font-size: 0.75rem; color: #64748b; }
+        .url-txt { color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; margin-top: 4px; }
+        
+        .btn-sm { width: auto; padding: 6px 12px; font-size: 0.8rem; box-shadow: none; }
+        .btn-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-secondary); }
+        .btn-outline:hover { border-color: var(--text-primary); color: var(--text-primary); background: rgba(255,255,255,0.05); }
 
-        .error-msg { color: var(--danger); font-size: 0.9rem; margin-top: 1rem; }
-        
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.8s linear infinite;
+        #result {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            color: #10b981;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .short-url { font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0; word-break: break-all; }
 
         .hidden { display: none !important; }
+        .error { color: var(--danger); font-size: 0.9rem; margin-top: 10px; min-height: 1.2em; }
+        
+        .ghost-trigger { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            width: 50px; 
+            height: 50px; 
+            z-index: 9999;
+            cursor: default; /* Keep cursor default to hide it better, or pointer if user wants hint */
+            /* background: rgba(255,0,0,0.1); Debugging */
+        }
     </style>
 </head>
 <body>
 
+    <a href="javascript:checkAdmin()" class="ghost-trigger" title="Admin"></a>
+
     <div class="container" id="app">
-        <!-- 公开页面 -->
-        <div id="view-public">
+        <!-- 页面: 首页 -->
+        <div id="view-home">
             <h1>Mini Link</h1>
             <div class="input-wrapper">
-                <input type="url" id="longUrl" placeholder="在此粘贴长链接 (https://...)" required autocomplete="off">
+                <input type="url" id="longUrl" placeholder="在此粘贴长链接 (https://...)" autocomplete="off">
             </div>
-            <button onclick="createLink()" id="createBtn">生成短链</button>
-            <div id="publicError" class="error-msg"></div>
+            <button onclick="createShortLink()" id="createBtn">一键生成</button>
+            <div class="error" id="homeError"></div>
             
             <div id="result">
-                <div class="result-label">您的短链接已生成</div>
+                <div>短链接已生成</div>
                 <div class="short-url" id="shortUrlDisplay"></div>
-                <button class="btn-copy" onclick="copyResult()">复制链接</button>
+                <button class="btn-sm" style="background: #10b981; margin-top:5px" onclick="copyResult()">复制</button>
             </div>
         </div>
 
-        <!-- 登录弹窗 -->
+        <!-- 页面: 登录 -->
         <div id="view-login" class="hidden">
-            <h1>管理员验证</h1>
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem">请输入 Secret Token 访问管理后台</p>
+            <h1>管理员登录</h1>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1.5rem">请输入您的 Secret Token</p>
             <div class="input-wrapper">
-                <input type="password" id="secretToken" placeholder="Secret Token">
+                <input type="password" id="tokenInput" placeholder="Password">
             </div>
-            <button onclick="saveToken()">进入后台</button>
-            <button onclick="showPublic()" style="margin-top:10px; background:transparent; color:var(--text-secondary); box-shadow:none">返回首页</button>
+            <button onclick="tryLogin()" id="loginBtn">验证并登录</button>
+            <div class="error" id="loginError"></div>
+            <button class="btn-outline" style="margin-top:15px" onclick="setView('home')">返回首页</button>
         </div>
 
-        <!-- 管理后台 -->
+        <!-- 页面: 管理后台 -->
         <div id="view-admin" class="hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem">
-                <h1 style="margin:0; font-size:1.5rem">链接管理</h1>
-                <button onclick="logout()" style="width:auto; padding:8px 16px; background:rgba(255,255,255,0.1); font-size:0.8rem; box-shadow:none">退出</button>
-            </div>
-
-            <!-- 创建 -->
-            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:2rem">
-                <div style="display:flex; gap:10px; margin-bottom:10px">
-                    <input type="text" id="adminSlug" placeholder="自定义短码 (可选)" style="width:40%">
-                    <input type="url" id="adminUrl" placeholder="长链接地址" style="flex:1">
+            <div class="admin-header">
+                <div>
+                    <h2 style="margin:0; font-size:1.2rem">后台管理</h2>
+                    <span id="totalCount" style="font-size:0.8rem; color:var(--text-secondary)">加载中...</span>
                 </div>
-                <button onclick="adminCreateLink()">创建自定义链接</button>
+                <div style="display:flex; gap:8px">
+                     <button class="btn-sm btn-danger" onclick="clearAllLinks()">清空所有</button>
+                     <button class="btn-sm btn-outline" onclick="doLogout()">退出</button>
+                </div>
             </div>
 
-            <!-- 列表 -->
-            <div id="linkList" style="max-height:400px; overflow-y:auto; padding-right:5px"></div>
-            <button id="loadMoreBtn" class="hidden" onclick="loadMore()" style="margin-top:15px; background:rgba(255,255,255,0.1); box-shadow:none">加载更多</button>
+            <!-- 工具栏: 创建 + 搜索 -->
+            <div class="admin-toolbar">
+                <input type="text" id="searchInput" placeholder="搜索 URL 或短码..." oninput="filterLinks()" style="flex:1">
+            </div>
+            
+            <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; margin-bottom:15px; display:flex; gap:8px">
+                 <input type="text" id="adminSlug" placeholder="自定义短码" style="width:30%">
+                 <input type="text" id="adminUrl" placeholder="长链接" style="flex:1">
+                 <button class="btn-sm" style="width:auto" onclick="adminCreate()">创建</button>
+            </div>
+
+            <div id="linkListWrapper" style="max-height: 400px; overflow-y: auto;">
+                <!-- 列表容器 -->
+                <div id="linkList"></div>
+            </div>
+            
+            <!-- 简单的加载更多指示器 -->
+            <div id="loadingMore" class="hidden" style="color:var(--text-secondary); font-size:0.8rem; margin-top:10px">加载中...</div>
         </div>
     </div>
-
-    <a href="#admin" class="admin-link">Admin Access</a>
-
+    
     <script>
-        const API_BASE = window.location.origin;
-        let nextCursor = null;
+        // --- 状态管理 ---
+        const state = {
+            token: localStorage.getItem('minilink_token'),
+            links: [], // 本地缓存列表用于搜索
+            cursor: null,
+            isLoading: false
+        };
 
-        // 路由逻辑
-        function handleRoute() {
-            const hash = window.location.hash;
-            if (hash === '#admin') {
-                const token = localStorage.getItem('minilink_token');
-                token ? showAdmin() : showLogin();
+        // --- 初始化 ---
+        window.addEventListener('load', () => {
+            // 如果 URL 带 #admin，尝试进后台
+            if (window.location.hash === '#admin') checkAdmin();
+            else setView('home');
+        });
+
+        // 监听 URL 变化 (后退/前进/手动修改)
+        window.addEventListener('hashchange', () => {
+             if (window.location.hash === '#admin') checkAdmin();
+             else setView('home');
+        });
+        
+        // 某些浏览器(如Chrome)在地址栏直接改hash回车可能只触发 popstate
+        window.addEventListener('popstate', () => {
+             if (window.location.hash === '#admin') checkAdmin();
+             else setView('home');
+        });
+
+        // --- 路由/视图切换 ---
+        function setView(viewName) {
+            ['home', 'login', 'admin'].forEach(v => {
+                document.getElementById('view-'+v).classList.add('hidden');
+            });
+            document.getElementById('view-'+viewName).classList.remove('hidden');
+            
+            // 清理错误信息
+            document.getElementById('loginError').innerText = '';
+            document.getElementById('homeError').innerText = '';
+        }
+
+        async function checkAdmin() {
+            if (!state.token) {
+                setView('login');
             } else {
-                showPublic();
+                // 有 Token，尝试验证一下有效性
+                // 通过加载第一页数据来验证
+                setView('login'); // 先显示登录页作为加载状态，或者直接转圈
+                document.getElementById('loginBtn').innerText = '验证中...';
+                document.getElementById('loginBtn').disabled = true;
+                
+                try {
+                    await fetchLinks(true); // 尝试加载
+                    setView('admin');
+                } catch (e) {
+                    console.error('Auth failed', e);
+                    logout(); // Token 无效，清除并停留在登录页
+                    document.getElementById('loginError').innerText = '登录已过期或密码错误';
+                } finally {
+                    document.getElementById('loginBtn').innerText = '验证并登录';
+                    document.getElementById('loginBtn').disabled = false;
+                }
             }
         }
-        window.addEventListener('hashchange', handleRoute);
-        window.addEventListener('load', handleRoute);
 
-        // 视图切换
-        function showPublic() {
-            toggle('view-public');
+        function doLogout() {
+            logout();
+            setView('home');
         }
-        function showLogin() {
-            toggle('view-login');
-        }
-        function showAdmin() {
-            toggle('view-admin');
-            loadLinks(true);
-        }
-        function toggle(id) {
-            ['view-public', 'view-login', 'view-admin'].forEach(v => {
-                const el = document.getElementById(v);
-                if (v === id) {
-                    el.classList.remove('hidden');
-                    // 动画重置
-                    el.style.animation = 'none';
-                    el.offsetHeight; /* trigger reflow */
-                    el.style.animation = 'slideUp 0.4s ease-out';
-                } else {
-                    el.classList.add('hidden');
-                }
-            });
-        }
-
-        // 鉴权
-        function saveToken() {
-            const t = document.getElementById('secretToken').value;
-            if(!t) return alert('请输入 Token');
-            localStorage.setItem('minilink_token', t);
-            showAdmin();
-        }
+        
         function logout() {
+            state.token = null;
             localStorage.removeItem('minilink_token');
-            window.location.hash = '';
+            state.links = [];
         }
 
-        // 核心功能
-        async function createLink() {
-            const urlIn = document.getElementById('longUrl');
-            const btn = document.getElementById('createBtn');
-            const err = document.getElementById('publicError');
-            const resBox = document.getElementById('result');
+        // --- 业务逻辑: 登录 ---
+        async function tryLogin() {
+            const input = document.getElementById('tokenInput');
+            const val = input.value.trim();
+            if (!val) return;
 
-            if (!urlIn.value) return;
+            // 临时保存，尝试请求
+            state.token = val;
+            
+            const btn = document.getElementById('loginBtn');
+            btn.innerText = '验证中...';
+            btn.disabled = true;
 
-            // 简单的URL校验
-            if (!urlIn.value.startsWith('http')) {
-                err.innerText = '链接必须以 http 或 https 开头';
+            try {
+                await fetchLinks(true); // 验证
+                localStorage.setItem('minilink_token', val); // 验证通过才持久化
+                setView('admin');
+                input.value = '';
+            } catch (e) {
+                state.token = null;
+                document.getElementById('loginError').innerText = '密码错误';
+            } finally {
+                btn.innerText = '验证并登录';
+                btn.disabled = false;
+            }
+        }
+
+        // --- 业务逻辑: 获取列表 ---
+        async function fetchLinks(reset = false) {
+            if (reset) {
+                state.links = [];
+                state.cursor = null;
+                document.getElementById('linkList').innerHTML = '';
+            }
+            
+            const url = \`/api/list\${state.cursor ? '?cursor='+state.cursor : ''}\`;
+            const res = await fetch(url, {
+                headers: { 'Authorization': state.token }
+            });
+            
+            if (res.status === 401) throw new Error('Unauthorized');
+            if (!res.ok) throw new Error('Network Error');
+            
+            const data = await res.json();
+            
+            // 合并数据
+            state.links = [...state.links, ...data.links];
+            state.cursor = data.list_complete ? null : data.cursor;
+            
+            renderList(state.links);
+            document.getElementById('totalCount').innerText = \`共 \${state.links.length} 条\`;
+            
+            // 如果还有更多数据，自动继续加载（为了搜索功能，我们尽量加载多一点，或者做分页加载）
+            // 这里简化为：每次只加载一页，用户滚动到底部加载更多（暂未实现无限滚动，用按钮代替或简单的自动加载）
+            // 为了搜索体验，我们这里简单地如果数量少于 100 且还有 cursor 就自动加载下一页
+            if (state.links.length < 100 && state.cursor) {
+                fetchLinks(); 
+            }
+        }
+
+        function renderList(links) {
+            const container = document.getElementById('linkList');
+            container.innerHTML = links.map(link => \`
+                <div class="link-item">
+                    <div class="link-detail">
+                        <div>
+                            <a href="/\${link.slug}" target="_blank" class="slug-txt">/\${link.slug}</a>
+                            <span class="date-txt">\${new Date(link.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <a href="\${link.url}" target="_blank" class="url-txt">\${link.url}</a>
+                    </div>
+                    <button class="btn-sm btn-danger" onclick="deleteLink('\${link.slug}')">删除</button>
+                </div>
+            \`).join('');
+        }
+
+        // --- 业务逻辑: 搜索/过滤 ---
+        function filterLinks() {
+            const key = document.getElementById('searchInput').value.toLowerCase();
+            if (!key) {
+                renderList(state.links);
                 return;
             }
+            const filtered = state.links.filter(l => 
+                l.slug.toLowerCase().includes(key) || 
+                (l.url && l.url.toLowerCase().includes(key))
+            );
+            renderList(filtered);
+        }
 
+        // --- 业务逻辑: 删除 & 清空 & 创建 ---
+        
+        async function deleteLink(slug) {
+            if (!confirm('确定删除吗？')) return;
+            await fetch('/api/delete', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'Authorization': state.token },
+                body: JSON.stringify({ slug })
+            });
+            // 本地移除
+            state.links = state.links.filter(l => l.slug !== slug);
+            filterLinks(); // 重新渲染
+        }
+
+        async function clearAllLinks() {
+            const confirmStr = prompt("警告：这将删除所有短链接！此操作不可恢复。\\n请输入 'CONFIRM' 确认清空：");
+            if (confirmStr !== 'CONFIRM') return;
+
+            const res = await fetch('/api/clear', {
+                method: 'DELETE',
+                headers: { 'Authorization': state.token }
+            });
+            
+            if (res.ok) {
+                alert('已全部清空');
+                fetchLinks(true);
+            } else {
+                alert('操作失败');
+            }
+        }
+
+        async function adminCreate() {
+            const url = document.getElementById('adminUrl').value;
+            const slug = document.getElementById('adminSlug').value;
+            if(!url) return alert('URL 不能为空');
+            
+            const res = await fetch('/api/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': state.token },
+                body: JSON.stringify({ url, customSlug: slug })
+            });
+            
+            if(!res.ok) {
+                const d = await res.json();
+                return alert(d.error);
+            }
+            
+            // 成功，清空输入框并刷新
+            document.getElementById('adminUrl').value = '';
+            document.getElementById('adminSlug').value = '';
+            fetchLinks(true); // 重新加载列表
+        }
+
+        // --- 首页逻辑 ---
+        async function createShortLink() {
+            const urlIn = document.getElementById('longUrl');
+            if(!urlIn.value) return;
+            
+            const btn = document.getElementById('createBtn');
+            btn.innerText = '生成中...';
             btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div>';
-            err.innerText = '';
-            resBox.style.display = 'none';
-
+            
             try {
                 const res = await fetch('/api/create', {
                     method: 'POST',
@@ -347,111 +477,25 @@ export function renderHtml() {
                     body: JSON.stringify({ url: urlIn.value })
                 });
                 const data = await res.json();
+                if(!res.ok) throw new Error(data.error || '失败');
                 
-                if (!res.ok) throw new Error(data.error || '生成失败，请重试');
-
-                document.getElementById('shortUrlDisplay').innerText = \`\${API_BASE}/\${data.slug}\`;
-                resBox.style.display = 'block';
-                urlIn.value = '';
-            } catch (e) {
-                err.innerText = e.message;
+                document.getElementById('shortUrlDisplay').innerText = window.location.origin + '/' + data.slug;
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('homeError').innerText = '';
+            } catch(e) {
+                document.getElementById('homeError').innerText = e.message;
             } finally {
+                btn.innerText = '一键生成';
                 btn.disabled = false;
-                btn.innerText = '生成短链';
             }
-        }
-
-        async function adminCreateLink() {
-            const url = document.getElementById('adminUrl').value;
-            const slug = document.getElementById('adminSlug').value;
-            const token = localStorage.getItem('minilink_token');
-
-            if(!url) return alert('请输入链接');
-
-            try {
-                const res = await fetch('/api/create', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': token 
-                    },
-                    body: JSON.stringify({ url, customSlug: slug })
-                });
-                if(!res.ok) {
-                    const d = await res.json();
-                    throw new Error(d.error);
-                }
-                alert('创建成功');
-                document.getElementById('adminUrl').value = '';
-                document.getElementById('adminSlug').value = '';
-                loadLinks(true);
-            } catch(e) {
-                alert(e.message);
-            }
-        }
-
-        async function loadLinks(reset) {
-            if(reset) {
-                document.getElementById('linkList').innerHTML = '';
-                nextCursor = null;
-            }
-            const token = localStorage.getItem('minilink_token');
-            let url = \`/api/list\${nextCursor ? '?cursor='+nextCursor : ''}\`;
-            
-            try {
-                const res = await fetch(url, { headers: {'Authorization': token} });
-                if(res.status === 401) { logout(); return; }
-                const data = await res.json();
-                
-                nextCursor = data.list_complete ? null : data.cursor;
-                document.getElementById('loadMoreBtn').className = nextCursor ? '' : 'hidden';
-
-                const list = document.getElementById('linkList');
-                data.links.forEach(l => {
-                    const date = new Date(l.createdAt).toLocaleDateString();
-                    const div = document.createElement('div');
-                    div.className = 'link-item';
-                    div.innerHTML = \`
-                        <div class="link-detail">
-                            <a href="/\${l.slug}" target="_blank" class="slug-txt">/\${l.slug}</a>
-                            <span class="url-txt" title="\${l.url}">\${l.url}</span>
-                        </div>
-                        <button class="btn-del" onclick="deleteLink('\${l.slug}')">删除</button>
-                    \`;
-                    list.appendChild(div);
-                });
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        async function deleteLink(slug) {
-            if(!confirm(\`确定删除 /\${slug} 吗？\`)) return;
-            const token = localStorage.getItem('minilink_token');
-            await fetch('/api/delete', {
-                method:'DELETE', 
-                headers:{
-                    'Content-Type':'application/json',
-                    'Authorization':token
-                },
-                body: JSON.stringify({slug})
-            });
-            loadLinks(true);
         }
 
         function copyResult() {
             const txt = document.getElementById('shortUrlDisplay').innerText;
-            navigator.clipboard.writeText(txt).then(() => {
-                const btn = document.querySelector('.btn-copy');
-                const origin = btn.innerText;
-                btn.innerText = '已复制!';
-                btn.style.background = '#10b981';
-                setTimeout(() => {
-                    btn.innerText = origin;
-                    btn.style.background = '';
-                }, 2000);
-            });
+            navigator.clipboard.writeText(txt);
+            alert('已复制');
         }
+
     </script>
 </body>
 </html>`;

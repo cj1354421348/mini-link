@@ -5,9 +5,10 @@ compatibility_date = "2023-05-18"
 # 定义 KV 存储空间
 # 注意：ID 需要用户在部署时自动或手动填入。
 # Deploy Button 流程通常会帮你处理绑定，或者用户第一次使用 wrangler create 时会生成。
-# [[kv_namespaces]]
-# binding = "LINKS"
-# id = "PLEASE_REPLACE_WITH_ID"
+[[kv_namespaces]]
+binding = "LINKS"
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+preview_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 
 
