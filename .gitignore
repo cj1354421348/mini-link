@@ -1,0 +1,17 @@
+# NPM
+node_modules/
+package-lock.json
+
+# Cloudflare Workers
+.wrangler/
+dist/
+worker.js
+worker.js.map
+
+# Environment Variables
+.env
+.dev.vars
+
+# System
+.DS_Store
+Thumbs.db

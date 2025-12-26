@@ -1,0 +1,17 @@
+name = "mini-link"
+main = "src/index.js"
+compatibility_date = "2023-05-18"
+
+# 定义 KV 存储空间
+# 注意：ID 需要用户在部署时自动或手动填入。
+# Deploy Button 流程通常会帮你处理绑定，或者用户第一次使用 wrangler create 时会生成。
+[[kv_namespaces]]
+binding = "LINKS"
+id = "PLEASE_REPLAEC_WITH_YOUR_KV_ID" 
+preview_id = "PLEASE_REPLACE_WITH_YOUR_PREVIEW_KV_ID"
+
+[vars]
+# 默认的安全密钥，强烈建议在 Cloudflare 仪表盘中修改此环境变量
+SECRET_TOKEN = "change_me_please"
+# 每日允许生成的公开链接数量（保护账户级 1000 次总配额）
+DAILY_QUOTA = "200"
