@@ -95,6 +95,11 @@ async function handleCreate(request, env) {
 
       const limit = parseInt(env.DAILY_QUOTA) || 50;
 
+      // 检查 KV 是否未绑定 (防止 500 报错)
+      if (!env.LINKS) {
+        return jsonResponse({ error: 'System Error: KV Namespace not bound. Please configure in Cloudflare Dashboard.' }, 500);
+      }
+
       // 检查当前用量
       const currentUsage = parseInt(await env.LINKS.get(usageKey) || '0');
       if (currentUsage >= limit) {

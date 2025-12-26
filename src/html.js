@@ -1,174 +1,280 @@
 export function renderHtml() {
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Link</title>
+    <title>极简短链 | Mini-Link</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
             --danger: #ef4444;
-            --radius: 12px;
         }
+        
+        * { box-sizing: border-box; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-gradient);
             color: var(--text-primary);
+            min-height: 100vh;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
+            overflow-x: hidden;
         }
+
+        /* 动态背景点缀 */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            filter: blur(150px);
+            opacity: 0.2;
+            border-radius: 50%;
+            z-index: -1;
+            top: -50px;
+            left: -50px;
+        }
+
         .container {
             width: 100%;
-            max-width: 500px;
-            background: var(--card-bg);
-            padding: 2rem;
-            border-radius: var(--radius);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 480px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
             text-align: center;
+            transition: transform 0.3s ease;
         }
-        h1 { margin-bottom: 2rem; font-weight: 800; letter-spacing: -0.025em; }
-        
-        /* Input Group */
-        .input-group { margin-bottom: 1.5rem; text-align: left; }
-        label { display: block; color: var(--text-secondary); margin-bottom: 0.5rem; font-size: 0.875rem; }
+
+        h1 {
+            margin: 0 0 2rem 0;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            font-size: 2rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 输入框容器 */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
         input {
             width: 100%;
-            padding: 12px 16px;
-            background: #020617;
-            border: 1px solid #334155;
+            padding: 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
             color: white;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
-            box-sizing: border-box; 
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s;
         }
-        input:focus { border-color: var(--accent); }
+        
+        input:focus {
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
 
-        /* Buttons */
+        input::placeholder { color: #475569; }
+
+        /* 按钮 */
         button {
             width: 100%;
-            padding: 12px;
+            padding: 16px;
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.1s, background-color 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 10px 20px -10px var(--accent);
         }
-        button:hover { background: var(--accent-hover); }
-        button:active { transform: scale(0.98); }
-        .btn-small { width: auto; padding: 6px 12px; font-size: 0.8rem; }
-        .btn-danger { background: var(--danger); }
 
-        /* Result Area */
-        #result { margin-top: 2rem; padding: 1rem; background: #020617; border-radius: 8px; display: none; word-break: break-all; }
-        .copy-btn { margin-top: 0.5rem; background: #334155; }
+        button:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -10px var(--accent);
+        }
+        
+        button:active { transform: translateY(0); }
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* Admin Styles */
-        .admin-link { position: fixed; bottom: 20px; right: 20px; color: var(--text-secondary); text-decoration: none; font-size: 0.8rem; opacity: 0.5; }
-        .admin-panel { display: none; text-align: left; }
-        .link-item { 
-            padding: 1rem; 
-            border-bottom: 1px solid #334155; 
-            display: flex; 
-            justify-content: space-between; 
+        /* 结果区域 */
+        #result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+            border: 1px solid var(--glass-border);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-label { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .short-url { 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--accent); 
+            margin-bottom: 1rem; 
+            word-break: break-all; 
+            font-family: monospace;
+        }
+
+        .btn-copy {
+            background: rgba(255,255,255,0.1);
+            box-shadow: none;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        .btn-copy:hover { background: rgba(255,255,255,0.2); }
+
+        /* 管理界面 */
+        .admin-link {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255,255,255,0.2);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: opacity 0.3s;
+        }
+        .admin-link:hover { opacity: 1; }
+
+        .link-item {
+            background: rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
         }
-        .link-info { overflow: hidden; }
-        .link-slug { font-weight: bold; color: var(--accent); display: block; }
-        .link-url { color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px; display: block; }
+        .link-item:hover { border-color: var(--glass-border); }
         
-        /* Utils */
-        .hidden { display: none !important; }
-        .error { color: var(--danger); margin-top: 1rem; font-size: 0.9rem; }
+        .link-detail { text-align: left; overflow: hidden; }
+        .slug-txt { color: var(--accent); font-weight: bold; font-family: monospace; }
+        .url-txt { color: var(--text-secondary); font-size: 0.8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
         
-        /* Loading */
-        .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        .btn-del {
+            width: auto;
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            box-shadow: none;
+        }
+        .btn-del:hover { background: var(--danger); color: white; }
+
+        .error-msg { color: var(--danger); font-size: 0.9rem; margin-top: 1rem; }
+        
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="container" id="app">
-        <!-- 公共视图 -->
+        <!-- 公开页面 -->
         <div id="view-public">
             <h1>Mini Link</h1>
-            <div class="input-group">
-                <input type="url" id="longUrl" placeholder="Paste a long URL here (https://...)" required>
+            <div class="input-wrapper">
+                <input type="url" id="longUrl" placeholder="在此粘贴长链接 (https://...)" required autocomplete="off">
             </div>
-            <button onclick="createLink()" id="createBtn">Shorten URL</button>
-            <div id="publicError" class="error"></div>
+            <button onclick="createLink()" id="createBtn">生成短链</button>
+            <div id="publicError" class="error-msg"></div>
             
             <div id="result">
-                <div style="color: var(--text-secondary); font-size: 0.9rem;">Your short link:</div>
-                <div id="shortUrlDisplay" style="color: var(--accent); font-weight: bold; margin: 0.5rem 0;"></div>
-                <button class="copy-btn" onclick="copyResult()">Copy</button>
+                <div class="result-label">您的短链接已生成</div>
+                <div class="short-url" id="shortUrlDisplay"></div>
+                <button class="btn-copy" onclick="copyResult()">复制链接</button>
             </div>
         </div>
 
-        <!-- 管理视图 -->
+        <!-- 登录弹窗 -->
+        <div id="view-login" class="hidden">
+            <h1>管理员验证</h1>
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem">请输入 Secret Token 访问管理后台</p>
+            <div class="input-wrapper">
+                <input type="password" id="secretToken" placeholder="Secret Token">
+            </div>
+            <button onclick="saveToken()">进入后台</button>
+            <button onclick="showPublic()" style="margin-top:10px; background:transparent; color:var(--text-secondary); box-shadow:none">返回首页</button>
+        </div>
+
+        <!-- 管理后台 -->
         <div id="view-admin" class="hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
-                <h1 style="margin:0">Admin</h1>
-                <button class="btn-small" onclick="logout()" style="background:#334155">Logout</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem">
+                <h1 style="margin:0; font-size:1.5rem">链接管理</h1>
+                <button onclick="logout()" style="width:auto; padding:8px 16px; background:rgba(255,255,255,0.1); font-size:0.8rem; box-shadow:none">退出</button>
             </div>
 
-            <!-- Admin Create -->
-            <div class="input-group">
-                <label>Admin Create</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="adminSlug" placeholder="Custom Slug (Optional)" style="width: 30%">
-                    <input type="url" id="adminUrl" placeholder="Long URL" style="flex:1">
+            <!-- 创建 -->
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; margin-bottom:2rem">
+                <div style="display:flex; gap:10px; margin-bottom:10px">
+                    <input type="text" id="adminSlug" placeholder="自定义短码 (可选)" style="width:40%">
+                    <input type="url" id="adminUrl" placeholder="长链接地址" style="flex:1">
                 </div>
-                <div style="margin-top:10px">
-                    <button onclick="adminCreateLink()">Create Custom Link</button>
-                </div>
+                <button onclick="adminCreateLink()">创建自定义链接</button>
             </div>
 
-            <!-- Link List -->
-            <div id="linkList" style="max-height: 400px; overflow-y: auto;">
-                <!-- items go here -->
-            </div>
-            <button id="loadMoreBtn" class="hidden" onclick="loadMore()" style="margin-top:10px; background: #334155">Load More</button>
+            <!-- 列表 -->
+            <div id="linkList" style="max-height:400px; overflow-y:auto; padding-right:5px"></div>
+            <button id="loadMoreBtn" class="hidden" onclick="loadMore()" style="margin-top:15px; background:rgba(255,255,255,0.1); box-shadow:none">加载更多</button>
         </div>
     </div>
 
-    <!-- Admin Login Modal -->
-    <div id="loginModal" class="container hidden" style="position:fixed; z-index:100; max-width:400px;">
-        <h2>Authentication</h2>
-        <input type="password" id="secretToken" placeholder="Enter Secret Token">
-        <button onclick="saveToken()" style="margin-top:1rem">Access Admin</button>
-    </div>
-
-    <a href="#admin" class="admin-link">Admin</a>
+    <a href="#admin" class="admin-link">Admin Access</a>
 
     <script>
         const API_BASE = window.location.origin;
         let nextCursor = null;
 
-        // --- Routing ---
+        // 路由逻辑
         function handleRoute() {
             const hash = window.location.hash;
             if (hash === '#admin') {
                 const token = localStorage.getItem('minilink_token');
-                if (!token) {
-                    showLogin();
-                } else {
-                    showAdmin();
-                }
+                token ? showAdmin() : showLogin();
             } else {
                 showPublic();
             }
@@ -176,80 +282,91 @@ export function renderHtml() {
         window.addEventListener('hashchange', handleRoute);
         window.addEventListener('load', handleRoute);
 
-        // --- View Logic ---
+        // 视图切换
         function showPublic() {
-            document.getElementById('view-public').classList.remove('hidden');
-            document.getElementById('view-admin').classList.add('hidden');
-            document.getElementById('loginModal').classList.add('hidden');
+            toggle('view-public');
         }
-
         function showLogin() {
-            document.getElementById('view-public').classList.add('hidden');
-            document.getElementById('view-admin').classList.add('hidden');
-            document.getElementById('loginModal').classList.remove('hidden');
+            toggle('view-login');
         }
-
         function showAdmin() {
-            document.getElementById('view-public').classList.add('hidden');
-            document.getElementById('view-admin').classList.remove('hidden');
-            document.getElementById('loginModal').classList.add('hidden');
+            toggle('view-admin');
             loadLinks(true);
         }
-
-        // --- Auth ---
-        function saveToken() {
-            const token = document.getElementById('secretToken').value;
-            localStorage.setItem('minilink_token', token);
-            handleRoute();
+        function toggle(id) {
+            ['view-public', 'view-login', 'view-admin'].forEach(v => {
+                const el = document.getElementById(v);
+                if (v === id) {
+                    el.classList.remove('hidden');
+                    // 动画重置
+                    el.style.animation = 'none';
+                    el.offsetHeight; /* trigger reflow */
+                    el.style.animation = 'slideUp 0.4s ease-out';
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
         }
 
+        // 鉴权
+        function saveToken() {
+            const t = document.getElementById('secretToken').value;
+            if(!t) return alert('请输入 Token');
+            localStorage.setItem('minilink_token', t);
+            showAdmin();
+        }
         function logout() {
             localStorage.removeItem('minilink_token');
             window.location.hash = '';
         }
 
-        // --- Actions ---
-
+        // 核心功能
         async function createLink() {
-            const url = document.getElementById('longUrl').value;
+            const urlIn = document.getElementById('longUrl');
             const btn = document.getElementById('createBtn');
-            const errorDiv = document.getElementById('publicError');
-            
-            if(!url) return;
-            
-            btn.innerHTML = '<div class="spinner"></div>';
+            const err = document.getElementById('publicError');
+            const resBox = document.getElementById('result');
+
+            if (!urlIn.value) return;
+
+            // 简单的URL校验
+            if (!urlIn.value.startsWith('http')) {
+                err.innerText = '链接必须以 http 或 https 开头';
+                return;
+            }
+
             btn.disabled = true;
-            errorDiv.innerText = '';
-            document.getElementById('result').style.display = 'none';
+            btn.innerHTML = '<div class="spinner"></div>';
+            err.innerText = '';
+            resBox.style.display = 'none';
 
             try {
                 const res = await fetch('/api/create', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ url: urlIn.value })
                 });
                 const data = await res.json();
                 
-                if (!res.ok) throw new Error(data.error || 'Something went wrong');
-                
-                const shortUrl = \`\${API_BASE}/\${data.slug}\`;
-                document.getElementById('shortUrlDisplay').innerText = shortUrl;
-                document.getElementById('result').style.display = 'block';
-                document.getElementById('longUrl').value = '';
+                if (!res.ok) throw new Error(data.error || '生成失败，请重试');
+
+                document.getElementById('shortUrlDisplay').innerText = \`\${API_BASE}/\${data.slug}\`;
+                resBox.style.display = 'block';
+                urlIn.value = '';
             } catch (e) {
-                errorDiv.innerText = e.message;
+                err.innerText = e.message;
             } finally {
-                btn.innerText = 'Shorten URL';
                 btn.disabled = false;
+                btn.innerText = '生成短链';
             }
         }
 
         async function adminCreateLink() {
             const url = document.getElementById('adminUrl').value;
-            const customSlug = document.getElementById('adminSlug').value;
+            const slug = document.getElementById('adminSlug').value;
             const token = localStorage.getItem('minilink_token');
 
-            if(!url) return alert('URL required');
+            if(!url) return alert('请输入链接');
 
             try {
                 const res = await fetch('/api/create', {
@@ -258,77 +375,82 @@ export function renderHtml() {
                         'Content-Type': 'application/json',
                         'Authorization': token 
                     },
-                    body: JSON.stringify({ url, customSlug })
+                    body: JSON.stringify({ url, customSlug: slug })
                 });
                 if(!res.ok) {
                     const d = await res.json();
                     throw new Error(d.error);
                 }
-                alert('Created!');
+                alert('创建成功');
                 document.getElementById('adminUrl').value = '';
                 document.getElementById('adminSlug').value = '';
-                loadLinks(true); // reload list
+                loadLinks(true);
             } catch(e) {
                 alert(e.message);
             }
         }
 
-        async function loadLinks(reset = false) {
+        async function loadLinks(reset) {
             if(reset) {
-                 document.getElementById('linkList').innerHTML = '';
-                 nextCursor = null;
+                document.getElementById('linkList').innerHTML = '';
+                nextCursor = null;
             }
-            
             const token = localStorage.getItem('minilink_token');
-            let url = '/api/list';
-            if(nextCursor) url += \`?cursor=\${nextCursor}\`;
+            let url = \`/api/list\${nextCursor ? '?cursor='+nextCursor : ''}\`;
+            
+            try {
+                const res = await fetch(url, { headers: {'Authorization': token} });
+                if(res.status === 401) { logout(); return; }
+                const data = await res.json();
+                
+                nextCursor = data.list_complete ? null : data.cursor;
+                document.getElementById('loadMoreBtn').className = nextCursor ? '' : 'hidden';
 
-            const res = await fetch(url, { headers: { 'Authorization': token }});
-            if(res.status === 401) {
-                logout(); return;
+                const list = document.getElementById('linkList');
+                data.links.forEach(l => {
+                    const date = new Date(l.createdAt).toLocaleDateString();
+                    const div = document.createElement('div');
+                    div.className = 'link-item';
+                    div.innerHTML = \`
+                        <div class="link-detail">
+                            <a href="/\${l.slug}" target="_blank" class="slug-txt">/\${l.slug}</a>
+                            <span class="url-txt" title="\${l.url}">\${l.url}</span>
+                        </div>
+                        <button class="btn-del" onclick="deleteLink('\${l.slug}')">删除</button>
+                    \`;
+                    list.appendChild(div);
+                });
+            } catch(e) {
+                console.error(e);
             }
-            
-            const data = await res.json();
-            nextCursor = data.list_complete ? null : data.cursor;
-            
-            if(nextCursor) document.getElementById('loadMoreBtn').classList.remove('hidden');
-            else document.getElementById('loadMoreBtn').classList.add('hidden');
-
-            const container = document.getElementById('linkList');
-            data.links.forEach(link => {
-                const el = document.createElement('div');
-                el.className = 'link-item';
-                el.innerHTML = \`
-                    <div class="link-info">
-                        <a href="/\${link.slug}" target="_blank" class="link-slug">/\${link.slug}</a>
-                        <span class="link-url" title="\${link.url}">\${link.url}</span>
-                    </div>
-                    <button class="btn-small btn-danger" onclick="deleteLink('\${link.slug}')">Del</button>
-                \`;
-                container.appendChild(el);
-            });
         }
 
         async function deleteLink(slug) {
-            if(!confirm('Delete ' + slug + '?')) return;
+            if(!confirm(\`确定删除 /\${slug} 吗？\`)) return;
             const token = localStorage.getItem('minilink_token');
             await fetch('/api/delete', {
-                method: 'DELETE',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': token 
+                method:'DELETE', 
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':token
                 },
-                body: JSON.stringify({ slug })
+                body: JSON.stringify({slug})
             });
             loadLinks(true);
         }
 
         function copyResult() {
-            const text = document.getElementById('shortUrlDisplay').innerText;
-            navigator.clipboard.writeText(text);
-            const btn = document.querySelector('.copy-btn');
-            btn.innerText = 'Copied!';
-            setTimeout(() => btn.innerText = 'Copy', 2000);
+            const txt = document.getElementById('shortUrlDisplay').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const origin = btn.innerText;
+                btn.innerText = '已复制!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.innerText = origin;
+                    btn.style.background = '';
+                }, 2000);
+            });
         }
     </script>
 </body>
