@@ -12,16 +12,6 @@ Designed for speed, simplicity, and zero maintenance.
 
 ### Features
 - 🚀 **Serverless**: Zero maintenance, runs on Cloudflare Edge global network.
-- ⚡ **Blazing Fast**: Uses KV Metadata strategy for O(1) redirects and fast listing.
-- 🛡️ **Smart Throttling**: Built-in daily quota (default 200/day) to protect your account's free tier limits.
-- 🔐 **Admin Panel**: Secure management interface to custom create, list, and delete links.
-- 📦 **One-File Deploy**: No build steps, no complex framework.
-
-### One-Click Deploy
-
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/YOUR_USERNAME/mini-link)
-
-> **Note**: Please **Fork** this repository to your GitHub account first, then click the button above!
 
 ### Configuration
 
@@ -60,9 +50,10 @@ After deployment, you need to configure a few things in the Cloudflare Dashboard
 
 ### 一键部署
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/YOUR_USERNAME/mini-link)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cj1354421348/mini-link)
 
-> **注意**: 请先 **Fork** 本仓库到您的 GitHub 账号，然后再点击上面的部署按钮！
+> **注意**: 首次部署前，请将链接中的 `YOUR_GITHUB_USERNAME` 修改为您的 GitHub 用户名（或 Fork 后直接使用此链接部署原作者版本）。
+
 
 ### 配置指南
 
