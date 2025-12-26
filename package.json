@@ -1,6 +1,7 @@
 {
   "name": "mini-link",
   "version": "1.0.0",
+  "type": "module",
   "description": "Minimalist Cloudflare Workers URL Shortener",
   "main": "src/index.js",
   "scripts": {
