@@ -130,14 +130,18 @@ async function handleCreate(request, env) {
       if (exists) return jsonResponse({ error: 'Slug already exists' }, 409);
     }
 
-    // --- 写入数据 (利用 Metadata 存 URL 实现列表秒开) ---
+    // --- 写入数据 ---
+    // Cloudflare KV metadata 限制 1024 字节
+    // 长 URL 存 value，短 URL 存 metadata (列表秒开优化)
+    const MAX_METADATA_URL_LENGTH = 900;
+    const isLongUrl = url.length > MAX_METADATA_URL_LENGTH;
+
     const metadata = {
-      url: url,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      ...(isLongUrl ? {} : { url })
     };
 
-    // Key=Slug, Value=1 (占位), Metadata=RealData
-    await env.LINKS.put(slug, '1', { metadata });
+    await env.LINKS.put(slug, isLongUrl ? url : '1', { metadata });
 
     // --- 增加计数 (不阻塞) ---
     // Cloudflare KV 不支持原生的原子递增，这在极端并发下稍微不准，
@@ -160,17 +164,27 @@ async function handleList(request, env) {
   // 列出 KV
   const list = await env.LINKS.list({ limit: 10, cursor });
 
-  // 格式化输出，过滤掉 USAGE: 开头的系统 Key
-  const cleanKeys = list.keys
-    .filter(k => !k.name.startsWith('USAGE:'))
-    .map(k => ({
-      slug: k.name,
-      url: k.metadata?.url,
-      createdAt: k.metadata?.createdAt
-    }));
+  // 过滤掉 USAGE: 开头的系统 Key
+  const linkKeys = list.keys.filter(k => !k.name.startsWith('USAGE:'));
+
+  // 处理长链接：metadata 中没有 url 的需要单独获取 value
+  const links = await Promise.all(
+    linkKeys.map(async (k) => {
+      let targetUrl = k.metadata?.url;
+      if (!targetUrl) {
+        // 长链接情况：URL 存在 value 中
+        targetUrl = await env.LINKS.get(k.name);
+      }
+      return {
+        slug: k.name,
+        url: targetUrl,
+        createdAt: k.metadata?.createdAt
+      };
+    })
+  );
 
   return jsonResponse({
-    links: cleanKeys,
+    links,
     cursor: list.cursor,
     list_complete: list.list_complete
   });
